@@ -1,0 +1,55 @@
+name: golangci-lint
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  golangci-lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: github.com/centurypay/*
+    steps:
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+          
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          
+      - name: Setup .netrc for git authentication
+        run: |
+          cat <<EOF > ~/.netrc
+          machine github.com
+          login x-access-token
+          password $GITHUB_TOKEN
+          EOF
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          
+      - name: Download Go modules
+        run: go mod download
+      
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.1
+          skip-cache: true
+          only-new-issues: true

@@ -11,6 +11,7 @@ func BenchmarkValidateCard_10000(b *testing.B) {
 	}
 
 	cards := make([]*Card, 10000)
+
 	for i := 0; i < 10000; i++ {
 		switch i % 8 {
 		case 0:
@@ -33,6 +34,7 @@ func BenchmarkValidateCard_10000(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		card := cards[i%len(cards)]
 		_, _ = reg.ValidateCard(card)
@@ -46,6 +48,7 @@ func BenchmarkValidateCard_100000(b *testing.B) {
 	}
 
 	cards := make([]*Card, 100000)
+
 	for i := 0; i < 100000; i++ {
 		switch i % 8 {
 		case 0:
@@ -68,6 +71,7 @@ func BenchmarkValidateCard_100000(b *testing.B) {
 	}
 
 	b.ResetTimer()
+
 	for i := 0; i < b.N; i++ {
 		card := cards[i%len(cards)]
 		_, _ = reg.ValidateCard(card)

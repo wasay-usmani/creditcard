@@ -17,6 +17,7 @@ func RegisterScheme(scheme *Scheme) RegistryOption {
 		}
 
 		r.schemes = append(r.schemes, scheme)
+
 		return nil
 	}
 }

@@ -24,9 +24,10 @@ type registry struct {
 // returned from NewSchemeRegistry.
 func NewSchemeRegistry(opts ...RegistryOption) (SchemeRegistry, error) {
 	r := &registry{schemes: make([]*Scheme, 0)}
-	r.schemes = append(r.schemes, NewScheme(SchemeNameVisa, SchemeTypeVisa, Code{Name: "CVV", Size: 3}, []int{13, 16, 19}, visaRegexp))
-	r.schemes = append(r.schemes, NewScheme(SchemeNameMastercard, SchemeTypeMastercard, Code{Name: "CVC", Size: 3}, []int{16}, mastercardRegexp))
-	r.schemes = append(r.schemes, NewScheme(SchemeNameAmex, SchemeTypeAmex, Code{Name: "CID", Size: 4}, []int{15}, amexRegexp))
+	r.schemes = append(r.schemes,
+		NewScheme(SchemeNameVisa, SchemeTypeVisa, Code{Name: "CVV", Size: 3}, []int{13, 16, 19}, visaRegexp),
+		NewScheme(SchemeNameMastercard, SchemeTypeMastercard, Code{Name: "CVC", Size: 3}, []int{16}, mastercardRegexp),
+		NewScheme(SchemeNameAmex, SchemeTypeAmex, Code{Name: "CID", Size: 4}, []int{15}, amexRegexp))
 
 	for _, opt := range opts {
 		if err := opt(r); err != nil {
@@ -62,5 +63,6 @@ func (r *registry) ValidateCard(card *Card) (*Scheme, error) {
 func (r *registry) ShowRegisteredSchemes() []*Scheme {
 	copied := make([]*Scheme, len(r.schemes))
 	copy(copied, r.schemes)
+
 	return copied
 }
