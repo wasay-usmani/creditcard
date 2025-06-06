@@ -8,7 +8,7 @@ import (
 type SchemeType string
 type SchemeName string
 
-// Scheme types
+// Scheme types 
 const (
 	SchemeTypeVisa       SchemeType = "visa"
 	SchemeTypeMastercard SchemeType = "mastercard"
