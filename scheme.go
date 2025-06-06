@@ -1,6 +1,9 @@
 package creditcard
 
-import "regexp"
+import (
+	"regexp"
+	"slices"
+)
 
 type SchemeType string
 type SchemeName string
@@ -93,6 +96,11 @@ type Code struct {
 	Size CodeSize `json:"size"`
 }
 
+type Range struct {
+	Start string
+	End   string
+}
+
 // NewScheme returns a new Scheme, which can be used to validate cards.
 //
 // The lengths argument is a list of valid lengths for the card number.
@@ -100,20 +108,43 @@ type Code struct {
 // to be validated. The regex argument is a regular expression that the
 // card number must match.
 func NewScheme(name SchemeName, schemeType SchemeType, code Code,
-	len CardLength, regex *regexp.Regexp) *Scheme {
+	len CardLength, v SchemeValidator) *Scheme {
 	return &Scheme{
 		Lengths:   len,
 		Code:      code,
 		Type:      schemeType,
 		Name:      name,
-		regex:     regex,
-		validator: RegexpValidator(regex),
+		validator: v,
 	}
 }
 
 func RegexpValidator(rex *regexp.Regexp) SchemeValidator {
 	return func(card *Card) bool {
 		return rex.MatchString(card.Number)
+	}
+}
+
+func PatternValidator(pattern []Range, lengths CardLength) SchemeValidator {
+	return func(card *Card) bool {
+		if !slices.Contains(lengths, len(card.Number)) {
+			return false
+		}
+
+		for _, r := range pattern {
+			if r.End == "" {
+				if card.Number[:len(r.Start)] == r.Start {
+					return true
+				}
+
+				continue
+			}
+
+			if card.Number[:len(r.Start)] >= r.Start && card.Number[:len(r.End)] <= r.End {
+				return true
+			}
+		}
+
+		return false
 	}
 }
 

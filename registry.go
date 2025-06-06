@@ -25,9 +25,9 @@ type registry struct {
 func NewSchemeRegistry(opts ...RegistryOption) (SchemeRegistry, error) {
 	r := &registry{schemes: make([]*Scheme, 0)}
 	r.schemes = append(r.schemes,
-		NewScheme(SchemeNameVisa, SchemeTypeVisa, Code{Name: CVV, Size: CodeSize3}, VisaCardLength, visaRegexp),
-		NewScheme(SchemeNameMastercard, SchemeTypeMastercard, Code{Name: CVC, Size: CodeSize3}, MastercardCardLength, mastercardRegexp),
-		NewScheme(SchemeNameAmex, SchemeTypeAmex, Code{Name: CID, Size: CodeSize4}, AmexCardLength, amexRegexp))
+		NewScheme(SchemeNameVisa, SchemeTypeVisa, Code{Name: CVV, Size: CodeSize3}, VisaCardLength, PatternValidator([]Range{{"4", ""}}, VisaCardLength)),
+		NewScheme(SchemeNameMastercard, SchemeTypeMastercard, Code{Name: CVC, Size: CodeSize3}, MastercardCardLength, RegexpValidator(mastercardRegexp)),
+		NewScheme(SchemeNameAmex, SchemeTypeAmex, Code{Name: CID, Size: CodeSize4}, AmexCardLength, RegexpValidator(amexRegexp)))
 
 	for _, opt := range opts {
 		if err := opt(r); err != nil {

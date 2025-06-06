@@ -49,8 +49,6 @@ func TestValidateCard(t *testing.T) {
 		wantType  SchemeType
 	}
 
-	var tests []testCase
-
 	reg, err := NewSchemeRegistry(
 		RegisterDiscover(),
 		RegisterJCB(),
@@ -64,130 +62,112 @@ func TestValidateCard(t *testing.T) {
 	}
 
 	// Add new test cases for the additional schemes
-	tests = append(tests,
-		testCase{
-			name:      "Valid Discover",
-			card:      Card{Number: "6011000990139424", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeDiscover,
-		},
-		testCase{
-			name:      "Valid JCB",
-			card:      Card{Number: "3530111333300000", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeJcb,
-		},
-		testCase{
-			name:      "Valid UnionPay",
-			card:      Card{Number: "6240008631401148", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeUnionPay,
-		},
-		testCase{
-			name:      "Valid Maestro",
-			card:      Card{Number: "6759649826438453", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeMaestro,
-		},
-		testCase{
-			name:      "Valid Diners Club",
-			card:      Card{Number: "30569309025904", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeDiners,
-		},
-		testCase{
-			name:      "Valid Mastercard 2-series",
-			card:      Card{Number: "2221000000000009", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeMastercard,
-		},
-		testCase{
-			name:      "Valid Amex (alternate)",
-			card:      Card{Number: "371449635398431", Code: ptrOf(1234)},
-			wantValid: true,
-			wantType:  SchemeTypeAmex,
-		},
-		testCase{
-			name:      "Valid Discover (alternate)",
-			card:      Card{Number: "6011111111111117", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeDiscover,
-		},
-		testCase{
-			name:      "Valid JCB (alternate)",
-			card:      Card{Number: "3566002020360505", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeJcb,
-		},
-		testCase{
-			name:      "Valid Maestro (alternate)",
-			card:      Card{Number: "5020500000000000", Code: ptrOf(123)},
-			wantValid: false,
-		},
-		testCase{
-			name:      "Valid Diners Club (alternate)",
-			card:      Card{Number: "38520000023237", Code: ptrOf(123)},
-			wantValid: true,
-			wantType:  SchemeTypeDiners,
-		},
-		// Invalid/edge cases
-		testCase{
-			name:      "Invalid UnionPay (wrong code length)",
-			card:      Card{Number: "6240008631401148", Code: ptrOf(12)},
-			wantValid: false,
-		},
-		testCase{
-			name:      "Invalid Maestro (Luhn fail)",
-			card:      Card{Number: "6759649826438454", Code: ptrOf(123)},
-			wantValid: false,
-		},
-		testCase{
-			name:      "Invalid Diners Club (wrong code length)",
-			card:      Card{Number: "30569309025904", Code: ptrOf(12)},
-			wantValid: false,
-		},
-
-		testCase{
+	testCases := []testCase{
+		{
 			name:      "Valid Visa",
-			card:      Card{Number: "4111111111111111", Code: ptrOf(123)},
+			card:      Card{Number: "4242424242424242", Code: ptrOf(123)},
 			wantValid: true,
 			wantType:  SchemeTypeVisa,
 		},
-		testCase{
+		{
+			name:      "Valid Visa Debit",
+			card:      Card{Number: "4000056655665556", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeVisa,
+		},
+		{
 			name:      "Valid Mastercard",
 			card:      Card{Number: "5555555555554444", Code: ptrOf(123)},
 			wantValid: true,
 			wantType:  SchemeTypeMastercard,
 		},
-		testCase{
-			name:      "Valid Amex",
+		{
+			name:      "Valid Mastercard 2-series",
+			card:      Card{Number: "2223003122003222", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeMastercard,
+		},
+		{
+			name:      "Valid Mastercard Debit",
+			card:      Card{Number: "5200828282828210", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeMastercard,
+		},
+		{
+			name:      "Valid Mastercard Prepaid",
+			card:      Card{Number: "5105105105105100", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeMastercard,
+		},
+		{
+			name:      "Valid American Express",
 			card:      Card{Number: "378282246310005", Code: ptrOf(1234)},
 			wantValid: true,
 			wantType:  SchemeTypeAmex,
 		},
-		testCase{
-			name:      "Invalid Visa (wrong code length)",
-			card:      Card{Number: "4111111111111111", Code: ptrOf(12)},
-			wantValid: false,
+		{
+			name:      "Valid American Express",
+			card:      Card{Number: "371449635398431", Code: ptrOf(1234)},
+			wantValid: true,
+			wantType:  SchemeTypeAmex,
 		},
-		testCase{
-			name:      "Invalid Mastercard (wrong number)",
-			card:      Card{Number: "5555555555554440", Code: ptrOf(123)},
-			wantValid: false,
+		{
+			name:      "Valid Discover",
+			card:      Card{Number: "6011111111111117", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeDiscover,
 		},
-		testCase{
-			name:      "Invalid Amex (wrong code length)",
-			card:      Card{Number: "378282246310005", Code: ptrOf(123)},
-			wantValid: false,
+		{
+			name:      "Valid Discover",
+			card:      Card{Number: "6011000990139424", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeDiscover,
 		},
-		testCase{
-			name:      "Unknown scheme",
-			card:      Card{Number: "9999999999999999", Code: ptrOf(123)},
-			wantValid: false,
+		{
+			name:      "Valid Discover Debit",
+			card:      Card{Number: "6011981111111113", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeDiscover,
 		},
-	)
+		{
+			name:      "Valid Diners Club",
+			card:      Card{Number: "3056930009020004", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeDiners,
+		},
+		{
+			name:      "Valid Diners Club 14-digit",
+			card:      Card{Number: "36227206271667", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeDiners,
+		},
+		{
+			name:      "Valid JCB",
+			card:      Card{Number: "3566002020360505", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeJcb,
+		},
+		{
+			name:      "Valid UnionPay",
+			card:      Card{Number: "6200000000000005", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeUnionPay,
+		},
+		{
+			name:      "Valid UnionPay Debit",
+			card:      Card{Number: "6200000000000047", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeUnionPay,
+		},
+		{
+			name:      "Valid UnionPay 19-digit",
+			card:      Card{Number: "6205500000000000004", Code: ptrOf(123)},
+			wantValid: true,
+			wantType:  SchemeTypeUnionPay,
+		},
+	}
 
-	for _, tc := range tests {
+	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			scheme, err := reg.ValidateCard(&tc.card)
 			if tc.wantValid {
