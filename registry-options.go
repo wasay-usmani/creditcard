@@ -37,50 +37,50 @@ func UnregisterScheme(t SchemeType) RegistryOption {
 	}
 }
 
-// RegisterJCB returns a RegistryOption that, when applied to a registry,
-// registers the JCB scheme.
-func RegisterJCB() RegistryOption {
-	return RegisterScheme(NewScheme(SchemeNameJcb, SchemeTypeJcb, Code{Name: "CID", Size: 3}, []int{16}, jcbRegexp))
-}
-
-// RegisterDiscover returns a RegistryOption that, when applied to a registry,
-// registers the Discover scheme.
-func RegisterDiscover() RegistryOption {
-	return RegisterScheme(NewScheme(SchemeNameDiscover, SchemeTypeDiscover, Code{Name: "CID", Size: 3}, []int{16}, discoverRegexp))
-}
-
-// RegisterUnionPay returns a RegistryOption that, when applied to a registry,
-// registers the UnionPay scheme.
-func RegisterUnionPay() RegistryOption {
-	return RegisterScheme(NewScheme(SchemeNameUnionPay, SchemeTypeUnionPay, Code{Name: "CID", Size: 3}, []int{16}, unionPayRegexp))
-}
-
-// RegisterMaestro returns a RegistryOption that, when applied to a registry,
-// registers the Maestro scheme.
-func RegisterMaestro() RegistryOption {
-	return RegisterScheme(NewScheme(SchemeNameMaestro, SchemeTypeMaestro, Code{Name: "CID", Size: 3}, []int{16}, maestroRegexp))
-}
-
-// RegisterDiners returns a RegistryOption that, when applied to a registry,
-// registers the Diners Club scheme.
-func RegisterDiners() RegistryOption {
-	return RegisterScheme(NewScheme(SchemeNameDiners, SchemeTypeDiners, Code{Name: "CID", Size: 3}, []int{16}, dinersRegexp))
-}
-
-// RegisterAmex returns a RegistryOption that, when applied to a registry,
-// registers the American Express scheme.
-func RegisterAmex() RegistryOption {
-	return RegisterScheme(NewScheme(SchemeNameAmex, SchemeTypeAmex, Code{Name: "CID", Size: 4}, []int{15}, amexRegexp))
-}
-
 // RegisterVisa returns a RegistryOption that, when applied to a registry,
 // registers the Visa scheme.
 func RegisterVisa() RegistryOption {
-	return RegisterScheme(NewScheme(SchemeNameVisa, SchemeTypeVisa, Code{Name: "CVV", Size: 3}, []int{13, 16, 19}, visaRegexp))
+	return RegisterScheme(NewScheme(SchemeNameVisa, SchemeTypeVisa, Code{Name: CVV, Size: CodeSize3}, VisaCardLength, visaRegexp))
 }
 
 // RegisterMastercard returns a RegistryOption that, when applied to a registry,
 // registers the Mastercard scheme.
 func RegisterMastercard() RegistryOption {
-	return RegisterScheme(NewScheme(SchemeNameMastercard, SchemeTypeMastercard, Code{Name: "CVC", Size: 3}, []int{16}, mastercardRegexp))
+	return RegisterScheme(NewScheme(SchemeNameMastercard, SchemeTypeMastercard, Code{Name: CVC, Size: CodeSize3}, MastercardCardLength, mastercardRegexp))
+}
+
+// RegisterAmex returns a RegistryOption that, when applied to a registry,
+// registers the American Express scheme.
+func RegisterAmex() RegistryOption {
+	return RegisterScheme(NewScheme(SchemeNameAmex, SchemeTypeAmex, Code{Name: CID, Size: CodeSize4}, AmexCardLength, amexRegexp))
+}
+
+// RegisterJCB returns a RegistryOption that, when applied to a registry,
+// registers the JCB scheme.
+func RegisterJCB() RegistryOption {
+	return RegisterScheme(NewScheme(SchemeNameJcb, SchemeTypeJcb, Code{Name: CVV, Size: CodeSize3}, JcbCardLength, jcbRegexp))
+}
+
+// RegisterDiscover returns a RegistryOption that, when applied to a registry,
+// registers the Discover scheme.
+func RegisterDiscover() RegistryOption {
+	return RegisterScheme(NewScheme(SchemeNameDiscover, SchemeTypeDiscover, Code{Name: CID, Size: CodeSize3}, DinersCardLength, discoverRegexp))
+}
+
+// RegisterUnionPay returns a RegistryOption that, when applied to a registry,
+// registers the UnionPay scheme.
+func RegisterUnionPay() RegistryOption {
+	return RegisterScheme(NewScheme(SchemeNameUnionPay, SchemeTypeUnionPay, Code{Name: CVN, Size: CodeSize3}, UnionPayCardLength, unionPayRegexp))
+}
+
+// RegisterMaestro returns a RegistryOption that, when applied to a registry,
+// registers the Maestro scheme.
+func RegisterMaestro() RegistryOption {
+	return RegisterScheme(NewScheme(SchemeNameMaestro, SchemeTypeMaestro, Code{Name: CVC, Size: CodeSize3}, MaestroCardLength, maestroRegexp))
+}
+
+// RegisterDiners returns a RegistryOption that, when applied to a registry,
+// registers the Diners Club scheme.
+func RegisterDiners() RegistryOption {
+	return RegisterScheme(NewScheme(SchemeNameDiners, SchemeTypeDiners, Code{Name: CVV, Size: CodeSize3}, DinersCardLength, dinersRegexp))
 }

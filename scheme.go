@@ -29,6 +29,29 @@ const (
 	SchemeNameMaestro    SchemeName = "Maestro"
 )
 
+type CodeName string
+
+// Code names
+const (
+	CVV CodeName = "CVV"
+	CVC CodeName = "CVC"
+	CVN CodeName = "CVN"
+	CID CodeName = "CID"
+)
+
+type CodeSize int
+
+func (c CodeSize) IsEqual(other int) bool {
+	return int(c) == int(other)
+}
+
+// Code sizes
+const (
+	CodeSize3 CodeSize = 3
+	CodeSize4 CodeSize = 4
+)
+
+// Regular expressions
 var (
 	visaRegexp       = regexp.MustCompile(`^(?:4\d{12}(?:\d{3})?)$`)
 	mastercardRegexp = regexp.MustCompile(
@@ -42,9 +65,22 @@ var (
 	maestroRegexp  = regexp.MustCompile(`^(5018|5020|5038|6304|6759|6761|6763)\d{8,15}$`)
 )
 
+type CardLength []int
+
+var (
+	VisaCardLength       = CardLength{16, 18, 19}
+	MastercardCardLength = CardLength{16}
+	AmexCardLength       = CardLength{15}
+	DinersCardLength     = CardLength{14, 16, 19}
+	DiscoverCardLength   = CardLength{16, 19}
+	JcbCardLength        = CardLength{16, 17, 18, 19}
+	UnionPayCardLength   = CardLength{14, 15, 16, 17, 18, 19}
+	MaestroCardLength    = CardLength{12, 13, 14, 15, 16, 17, 18, 19}
+)
+
 type SchemeValidator func(card *Card) bool
 type Scheme struct {
-	Lengths   []int           `json:"lengths"`
+	Lengths   CardLength      `json:"lengths"`
 	Code      Code            `json:"code"`
 	Type      SchemeType      `json:"scheme_type"`
 	Name      SchemeName      `json:"scheme_name"`
@@ -53,8 +89,8 @@ type Scheme struct {
 }
 
 type Code struct {
-	Name string `json:"name"`
-	Size int    `json:"size"`
+	Name CodeName `json:"name"`
+	Size CodeSize `json:"size"`
 }
 
 // NewScheme returns a new Scheme, which can be used to validate cards.
@@ -64,9 +100,9 @@ type Code struct {
 // to be validated. The regex argument is a regular expression that the
 // card number must match.
 func NewScheme(name SchemeName, schemeType SchemeType, code Code,
-	lengths []int, regex *regexp.Regexp) *Scheme {
+	len CardLength, regex *regexp.Regexp) *Scheme {
 	return &Scheme{
-		Lengths:   lengths,
+		Lengths:   len,
 		Code:      code,
 		Type:      schemeType,
 		Name:      name,

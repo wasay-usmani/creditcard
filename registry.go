@@ -25,9 +25,9 @@ type registry struct {
 func NewSchemeRegistry(opts ...RegistryOption) (SchemeRegistry, error) {
 	r := &registry{schemes: make([]*Scheme, 0)}
 	r.schemes = append(r.schemes,
-		NewScheme(SchemeNameVisa, SchemeTypeVisa, Code{Name: "CVV", Size: 3}, []int{13, 16, 19}, visaRegexp),
-		NewScheme(SchemeNameMastercard, SchemeTypeMastercard, Code{Name: "CVC", Size: 3}, []int{16}, mastercardRegexp),
-		NewScheme(SchemeNameAmex, SchemeTypeAmex, Code{Name: "CID", Size: 4}, []int{15}, amexRegexp))
+		NewScheme(SchemeNameVisa, SchemeTypeVisa, Code{Name: CVV, Size: CodeSize3}, VisaCardLength, visaRegexp),
+		NewScheme(SchemeNameMastercard, SchemeTypeMastercard, Code{Name: CVC, Size: CodeSize3}, MastercardCardLength, mastercardRegexp),
+		NewScheme(SchemeNameAmex, SchemeTypeAmex, Code{Name: CID, Size: CodeSize4}, AmexCardLength, amexRegexp))
 
 	for _, opt := range opts {
 		if err := opt(r); err != nil {
@@ -48,7 +48,7 @@ func (r *registry) ValidateCard(card *Card) (*Scheme, error) {
 
 	for _, scheme := range r.schemes {
 		if scheme.validator != nil && scheme.validator(card) {
-			if card.Code != nil && len(*card.Code) != scheme.Code.Size {
+			if card.Code != nil && scheme.Code.Size.IsEqual(*card.Code) {
 				return scheme.clone(), fmt.Errorf("Code is not valid for %s", scheme.Type)
 			}
 

@@ -7,7 +7,7 @@ import (
 type CardOptions func(*Card)
 type Card struct {
 	Number string
-	Code   *string
+	Code   *int
 }
 
 func NewCard(number string, opts ...CardOptions) *Card {
@@ -20,7 +20,7 @@ func NewCard(number string, opts ...CardOptions) *Card {
 	return c
 }
 
-func WithCode(code string) CardOptions {
+func WithCode(code int) CardOptions {
 	return func(c *Card) {
 		c.Code = &code
 	}
